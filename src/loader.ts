@@ -18,14 +18,39 @@
  * ```
  */
 
+import { createHash } from 'node:crypto';
+import { z } from 'zod';
 import { AtpAgent } from '@atproto/api';
 import type { LoaderConfig, Document, Publication } from './schemas.js';
-import { 
-  LoaderConfigSchema, 
-  DocumentSchema, 
+import {
+  LoaderConfigSchema,
+  DocumentSchema,
   PublicationSchema,
-  COLLECTIONS 
+  COLLECTIONS
 } from './schemas.js';
+
+/**
+ * Minimal duck-typed shape of Astro's Content Layer load callback context.
+ * Covers both v5 (generateDigest) and v6 (meta). Both are optional so the
+ * loader works against either version without importing astro types.
+ */
+interface LoaderContext {
+  store: {
+    set: (entry: { id: string; data: unknown; digest?: string }) => void;
+    clear: () => void;
+  };
+  logger: {
+    info: (msg: string) => void;
+    warn: (msg: string) => void;
+    error: (msg: string) => void;
+  };
+  generateDigest?: (data: unknown) => string;
+  meta?: unknown;
+}
+
+function computeDigest(data: unknown): string {
+  return createHash('sha256').update(JSON.stringify(data)).digest('hex');
+}
 
 export interface StandardSiteDocument {
   /** Unique ID derived from the record key (tid) */
@@ -117,18 +142,9 @@ export function standardSiteLoader(config: Partial<LoaderConfig>) {
   return {
     name: 'standard-site-loader',
     
-    async load({ store, logger, generateDigest }: {
-      store: {
-        set: (entry: { id: string; data: unknown; digest?: string }) => void;
-        clear: () => void;
-      };
-      logger: {
-        info: (msg: string) => void;
-        warn: (msg: string) => void;
-        error: (msg: string) => void;
-      };
-      generateDigest: (data: unknown) => string;
-    }) {
+    async load(ctx: LoaderContext) {
+      const { store, logger, generateDigest } = ctx;
+      const digestFor = generateDigest ?? computeDigest;
       logger.info(`Loading documents from ${validatedConfig.repo}`);
       
       const agent = new AtpAgent({ service: validatedConfig.service });
@@ -211,7 +227,7 @@ export function standardSiteLoader(config: Partial<LoaderConfig>) {
             store.set({
               id: entry.id,
               data: entry,
-              digest: generateDigest(entry),
+              digest: digestFor(entry),
             });
           } catch (err) {
             logger.warn(`Error processing record ${record.uri}: ${err}`);
@@ -225,7 +241,7 @@ export function standardSiteLoader(config: Partial<LoaderConfig>) {
       }
     },
     
-    /** Schema for Astro content collections */
+    /** Legacy schema shape — kept for Astro v5 backwards compat. */
     schema: () => ({
       id: { type: 'string' as const },
       uri: { type: 'string' as const },
@@ -239,6 +255,50 @@ export function standardSiteLoader(config: Partial<LoaderConfig>) {
       visibility: { type: 'string' as const, enum: ['public', 'unlisted', 'private'] },
       publication: { type: 'string' as const, optional: true },
     }),
+
+    createSchema: async () => ({
+      schema: z.object({
+        id: z.string(),
+        uri: z.string(),
+        cid: z.string(),
+        title: z.string(),
+        site: z.string(),
+        publishedAt: z.date(),
+        path: z.string().optional(),
+        url: z.string().optional(),
+        description: z.string().optional(),
+        updatedAt: z.date().optional(),
+        tags: z.array(z.string()),
+        coverImage: z.object({
+          cid: z.string(),
+          mimeType: z.string(),
+          size: z.number(),
+        }).optional(),
+        bskyPostRef: z.object({
+          uri: z.string(),
+          cid: z.string(),
+        }).optional(),
+        textContent: z.string().optional(),
+        content: z.unknown().optional(),
+      }),
+      types: `export interface StandardSiteDocumentEntry {
+  id: string;
+  uri: string;
+  cid: string;
+  title: string;
+  site: string;
+  publishedAt: Date;
+  path?: string;
+  url?: string;
+  description?: string;
+  updatedAt?: Date;
+  tags: string[];
+  coverImage?: { cid: string; mimeType: string; size: number };
+  bskyPostRef?: { uri: string; cid: string };
+  textContent?: string;
+  content?: unknown;
+}`,
+    }),
   };
 }
 
@@ -249,18 +309,9 @@ export function publicationLoader(config: { repo: string; service?: string }) {
   return {
     name: 'standard-site-publication-loader',
     
-    async load({ store, logger, generateDigest }: {
-      store: {
-        set: (entry: { id: string; data: unknown; digest?: string }) => void;
-        clear: () => void;
-      };
-      logger: {
-        info: (msg: string) => void;
-        warn: (msg: string) => void;
-        error: (msg: string) => void;
-      };
-      generateDigest: (data: unknown) => string;
-    }) {
+    async load(ctx: LoaderContext) {
+      const { store, logger, generateDigest } = ctx;
+      const digestFor = generateDigest ?? computeDigest;
       const service = config.service ?? 'https://bsky.social';
       logger.info(`Loading publications from ${config.repo}`);
       
@@ -311,10 +362,10 @@ export function publicationLoader(config: { repo: string; service?: string }) {
           store.set({
             id: entry.id,
             data: entry,
-            digest: generateDigest(entry),
+            digest: digestFor(entry),
           });
         }
-        
+
         logger.info(`Loaded ${response.data.records.length} publications`);
       } catch (err) {
         logger.error(`Failed to load publications: ${err}`);

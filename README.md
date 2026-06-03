@@ -13,6 +13,8 @@ Created with love by *Bryan Guffey*
 npm install @bryanguffey/astro-standard-site
 ```
 
+Compatible with Astro 5 and 6. The package has no peer dependency on Astro — install whichever version your site uses.
+
 ## Use Cases
 
 This package supports multiple workflows:
