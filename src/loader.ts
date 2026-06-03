@@ -280,6 +280,7 @@ export function standardSiteLoader(config: Partial<LoaderConfig>) {
         }).optional(),
         textContent: z.string().optional(),
         content: z.unknown().optional(),
+        _raw: z.record(z.unknown()),
       }),
       types: `export interface StandardSiteDocumentEntry {
   id: string;
@@ -297,6 +298,7 @@ export function standardSiteLoader(config: Partial<LoaderConfig>) {
   bskyPostRef?: { uri: string; cid: string };
   textContent?: string;
   content?: unknown;
+  _raw: Record<string, unknown>;
 }`,
     }),
   };
