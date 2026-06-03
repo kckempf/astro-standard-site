@@ -83,17 +83,17 @@ function formatRelativeTime(date: Date): string {
   });
 }
 
-// Get reply URL for Bluesky
+// Get reply URL for Bluesky — links to the post page so the original skeet
+// shows above the compose area (the intent/compose endpoint hides it).
+// bsky.app accepts either a handle or DID in the profile path.
 function getReplyUrl(): string | null {
   if (!bskyPostUri) return null;
-  
-  // Parse the AT-URI to get handle and post ID
+
   const match = bskyPostUri.match(/at:\/\/([^/]+)\/app\.bsky\.feed\.post\/(.+)/);
   if (!match) return null;
-  
+
   const [, did, postId] = match;
-  // For DIDs, we'd need to resolve to handle, but for now use the intent URL
-  return `https://bsky.app/intent/compose?reply=${encodeURIComponent(bskyPostUri)}`;
+  return `https://bsky.app/profile/${did}/post/${postId}`;
 }
 
 const replyUrl = getReplyUrl();
@@ -108,7 +108,7 @@ const replyUrl = getReplyUrl();
     
     {showReplyLink && replyUrl && (
       <a href={replyUrl} target="_blank" rel="noopener noreferrer" class="comments-reply-link">
-        Reply on Bluesky →
+        View & reply on Bluesky →
       </a>
     )}
   </header>
