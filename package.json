@@ -1,7 +1,7 @@
 {
-  "name": "@bryanguffey/astro-standard-site",
+  "name": "@kckempf/astro-standard-site",
   "version": "1.0.4",
-  "description": "Astro integration for standard.site - unified ATProto longform publishing",
+  "description": "Astro integration for standard.site - unified ATProto longform publishing (fork of @bryanguffey/astro-standard-site)",
   "keywords": [
     "astro",
     "astro-integration",
@@ -15,16 +15,19 @@
     "comments",
     "federation"
   ],
-  "homepage": "https://github.com/musicjunkieg/astro-standard-site#readme",
+  "homepage": "https://github.com/kckempf/astro-standard-site#readme",
   "bugs": {
-    "url": "https://github.com/musicjunkieg/astro-standard-site/issues"
+    "url": "https://github.com/kckempf/astro-standard-site/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/musicjunkieg/astro-standard-site.git"
+    "url": "git+https://github.com/kckempf/astro-standard-site.git"
   },
   "license": "MIT",
   "author": "Bryan Guffey <bryan@makeworkbetter.io> (https://bryanguffey.com)",
+  "contributors": [
+    "Kevin Kempf <kckempf@gmail.com>"
+  ],
   "type": "module",
   "exports": {
     ".": {
