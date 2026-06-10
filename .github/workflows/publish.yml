@@ -33,5 +33,6 @@ jobs:
         run: npm test
         
       # No NODE_AUTH_TOKEN needed - uses OIDC!
+      # Access is set via publishConfig in package.json.
       - name: Publish to npm
-        run: npm publish --access public
+        run: npm publish
