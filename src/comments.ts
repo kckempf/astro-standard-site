@@ -260,22 +260,26 @@ export async function fetchComments(
     allComments.push(...replies);
   }
   
-  // Search for mentions of the canonical URL
-  if (canonicalUrl) {
-    const mentions = await searchBlueskyMentions(canonicalUrl, {
-      maxResults: Math.max(10, maxComments - allComments.length),
-      service,
-    });
-    
-    // Filter out duplicates and the original post
-    const existingUris = new Set(allComments.map(c => c.uri));
-    if (bskyPostUri) existingUris.add(bskyPostUri);
-    
-    for (const mention of mentions) {
-      if (!existingUris.has(mention.uri)) {
-        allComments.push(mention);
-        existingUris.add(mention.uri);
+  // Search for mentions of the canonical URL (skipped when a bskyPostUri is
+  // already provided — the explicit URI makes the search redundant, and
+  // searchPosts requires auth which the build-time public endpoint lacks).
+  if (canonicalUrl && !bskyPostUri) {
+    try {
+      const mentions = await searchBlueskyMentions(canonicalUrl, {
+        maxResults: Math.max(10, maxComments - allComments.length),
+        service,
+      });
+
+      const existingUris = new Set(allComments.map(c => c.uri));
+
+      for (const mention of mentions) {
+        if (!existingUris.has(mention.uri)) {
+          allComments.push(mention);
+          existingUris.add(mention.uri);
+        }
       }
+    } catch (err) {
+      console.warn(`searchBlueskyMentions failed for ${canonicalUrl}:`, err instanceof Error ? err.message : err);
     }
   }
   
