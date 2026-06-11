@@ -4,7 +4,7 @@
 
 Astro integration for ATProto longform publishing via the `standard.site` lexicon. Syncs blog posts to Leaflet/WhiteWind and aggregates federated comments.
 
-**Package:** `@bryanguffey/astro-standard-site`
+**Package:** `@kckempf/astro-standard-site` (fork of `@bryanguffey/astro-standard-site`)
 
 ## Project Structure
 

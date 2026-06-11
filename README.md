@@ -7,10 +7,12 @@ Publish your Astro blog to the federated web. This package connects your blog to
 - **Verified ownership** — Prove you own your content with cryptographic verification
 
 Created with love by *Bryan Guffey*
+Forked and extended by *Kevin Kempf*
+
 ## Installation
 
 ```bash
-npm install @bryanguffey/astro-standard-site
+npm install @kckempf/astro-standard-site
 ```
 
 Compatible with Astro 5 and 6. The package has no peer dependency on Astro — install whichever version your site uses.
@@ -39,7 +41,7 @@ The fastest way to get started — add federated comments to your existing posts
 ```astro
 ---
 // src/layouts/BlogPost.astro
-import Comments from '@bryanguffey/astro-standard-site/components/Comments.astro';
+import Comments from '@kckempf/astro-standard-site/components/Comments.astro';
 
 const { bskyPostUri } = Astro.props.frontmatter;
 ---
@@ -108,7 +110,7 @@ First, create a publication record that represents your blog:
 
 ```ts
 // scripts/create-publication.ts
-import { StandardSitePublisher } from '@bryanguffey/astro-standard-site';
+import { StandardSitePublisher } from '@kckempf/astro-standard-site';
 
 const publisher = new StandardSitePublisher({
   handle: 'you.bsky.social',
@@ -154,7 +156,7 @@ Verification lets platforms confirm you own the content. Create a well-known end
 ```ts
 // src/pages/.well-known/site.standard.publication.ts
 import type { APIRoute } from 'astro';
-import { generatePublicationWellKnown } from '@bryanguffey/astro-standard-site';
+import { generatePublicationWellKnown } from '@kckempf/astro-standard-site';
 
 export const GET: APIRoute = () => {
   return new Response(
@@ -194,12 +196,12 @@ Displays Bluesky replies as a comment section.
 ```
 
 | Prop | Type | Default | Description |
-|------|------|---------|-------------|
+| ------ | ------ | --------- | ------------- |
 | `bskyPostUri` | `string` | — | AT-URI of the Bluesky announcement post |
 | `canonicalUrl` | `string` | — | URL of your blog post (for mention search) |
 | `maxDepth` | `number` | `3` | Maximum nesting depth for replies |
 | `title` | `string` | `"Comments"` | Section heading |
-| `showReplyLink` | `boolean` | `true` | Show "Reply on Bluesky" link |
+| `showReplyLink` | `boolean` | `true` | Show "View & reply on Bluesky" link |
 | `class` | `string` | — | Custom CSS class |
 
 **Styling:** The component uses CSS custom properties that inherit from your site's theme:
@@ -223,7 +225,7 @@ Displays Bluesky replies as a comment section.
 Handles authentication and publishing to ATProto.
 
 ```ts
-import { StandardSitePublisher } from '@bryanguffey/astro-standard-site';
+import { StandardSitePublisher } from '@kckempf/astro-standard-site';
 
 const publisher = new StandardSitePublisher({
   handle: 'you.bsky.social',      // Your handle
@@ -291,7 +293,7 @@ const result = await publisher.publishPublication({
 Transform markdown for ATProto compatibility.
 
 ```ts
-import { transformContent } from '@bryanguffey/astro-standard-site';
+import { transformContent } from '@kckempf/astro-standard-site';
 
 const result = transformContent(markdownString, {
   baseUrl: 'https://yourblog.com',  // For resolving relative links
@@ -319,7 +321,7 @@ Astro Content Layer loader — pull YOUR content written on other platforms (Lea
 ```ts
 // src/content/config.ts
 import { defineCollection } from 'astro:content';
-import { standardSiteLoader } from '@bryanguffey/astro-standard-site';
+import { standardSiteLoader } from '@kckempf/astro-standard-site';
 
 const federated = defineCollection({
   loader: standardSiteLoader({
@@ -332,7 +334,7 @@ export const collections = { federated };
 ```
 
 | Option | Type | Description |
-|--------|------|-------------|
+| -------- | ------ | ------------- |
 | `repo` | `string` | **Required.** ATProto handle or DID to load from |
 | `excludeSite` | `string` | Skip documents with this site URL (your blog) |
 | `publication` | `string` | Only load documents from this specific site |
@@ -371,7 +373,7 @@ const posts = await getCollection('federated');
 **Loaded document fields:**
 
 | Field | Type | Description |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | `id` | `string` | Record key (TID) |
 | `uri` | `string` | Full AT-URI |
 | `title` | `string` | Document title |
@@ -414,7 +416,7 @@ const publications = defineCollection({
 Fetch comments programmatically (used internally by the Comments component).
 
 ```ts
-import { fetchComments } from '@bryanguffey/astro-standard-site';
+import { fetchComments } from '@kckempf/astro-standard-site';
 
 const comments = await fetchComments({
   bskyPostUri: 'at://did:plc:xxx/app.bsky.feed.post/abc123',
@@ -434,7 +436,7 @@ import {
   getDocumentAtUri,
   getPublicationAtUri,
   parseAtUri,
-} from '@bryanguffey/astro-standard-site';
+} from '@kckempf/astro-standard-site';
 
 // For /.well-known/site.standard.publication endpoint
 generatePublicationWellKnown({ did: '...', publicationRkey: '...' });
@@ -460,24 +462,28 @@ parseAtUri('at://did:plc:xxx/site.standard.document/3abc123');
 ### Getting Your DID
 
 Your DID is your permanent identifier on ATProto. Find it at:
+
 - [bsky.app/settings](https://bsky.app/settings) → scroll to "DID"
 - Or: `https://public.api.bsky.app/xrpc/com.atproto.identity.resolveHandle?handle=you.bsky.social`
 
 ### Getting AT-URIs from Bluesky URLs
 
 Bluesky web URLs look like:
-```
+
+```bash
 https://bsky.app/profile/you.bsky.social/post/3abc123xyz
 ```
 
 The AT-URI format is:
-```
+
+```bash
 at://did:plc:YOUR_DID/app.bsky.feed.post/3abc123xyz
 ```
 
 ### Viewing Your Published Content
 
 After publishing, view your records at:
+
 - `https://pdsls.dev/at://YOUR_DID/site.standard.publication`
 - `https://pdsls.dev/at://YOUR_DID/site.standard.document`
 

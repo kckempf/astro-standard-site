@@ -80,18 +80,21 @@ npm test
 ### Default: Everything from Index
 
 Users import from main entry:
+
 ```ts
-import { myFunction } from '@bryanguffey/astro-standard-site';
+import { myFunction } from '@kckempf/astro-standard-site';
 ```
 
 ### Subpath Export
 
 Users import from specific module:
+
 ```ts
-import { myFunction } from '@bryanguffey/astro-standard-site/newmodule';
+import { myFunction } from '@kckempf/astro-standard-site/newmodule';
 ```
 
 Use subpath exports when:
+
 - Module has heavy dependencies you want tree-shakeable
 - Module is optional/specialized
 - Keeping main export clean
@@ -99,13 +102,15 @@ Use subpath exports when:
 ### Component Export
 
 For Astro components, use glob pattern:
+
 ```json
 "./components/*": "./components/*"
 ```
 
 Users import:
+
 ```ts
-import Comments from '@bryanguffey/astro-standard-site/components/Comments.astro';
+import Comments from '@kckempf/astro-standard-site/components/Comments.astro';
 ```
 
 ## Checklist

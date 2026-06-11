@@ -15,23 +15,27 @@ Uses OIDC trusted publishing — no npm token stored in secrets.
 `.github/workflows/publish.yml`
 
 Key settings:
+
 ```yaml
 permissions:
   id-token: write   # Required for OIDC
   contents: read
 
-- run: npm publish --access public
-  # No NODE_AUTH_TOKEN needed
+- run: npm publish
+  # No NODE_AUTH_TOKEN needed; `access: public` is set via publishConfig in package.json.
 ```
 
 ### npm Configuration
 
-Configure trusted publisher at https://www.npmjs.com/package/@bryanguffey/astro-standard-site/access
+Configure trusted publisher at https://www.npmjs.com/package/@kckempf/astro-standard-site/access
 
 Settings:
-- **Organization/user:** `bryanguffey`
-- **Repository:** `astro-standard-site` (or actual repo name)
+
+- **Organization/user:** `kckempf`
+- **Repository:** `kckempf/astro-standard-site`
 - **Workflow filename:** `publish.yml`
+
+> Note: this fork republishes under the `@kckempf` scope. The OIDC trusted publisher is bound to *this* package + GitHub repo pair, so it must be reconfigured on npm; the upstream `@bryanguffey` config does not carry over.
 
 ## Release Process
 
@@ -77,22 +81,25 @@ This triggers the `publish.yml` workflow.
 Follow semver:
 
 | Change | Version Bump |
-|--------|--------------|
+| -------- | -------------- |
 | Bug fix, no API change | patch (1.0.0 → 1.0.1) |
 | New feature, backward compatible | minor (1.0.0 → 1.1.0) |
 | Breaking change | major (1.0.0 → 2.0.0) |
 
 ## Troubleshooting
 
-**"Unable to authenticate"**
+### "Unable to authenticate"
+
 - Check workflow filename matches exactly (case-sensitive, include `.yml`)
 - Ensure `id-token: write` permission is set
 - Verify trusted publisher config on npmjs.com
 
-**"Package already exists"**
+### "Package already exists"
+
 - Version in `package.json` wasn't bumped
 - Bump version and re-release
 
-**Tests failing in CI**
+### Tests failing in CI
+
 - Workflow runs `npm test` before publish
 - Fix tests locally first: `npm test`
