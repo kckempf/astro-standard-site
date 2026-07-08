@@ -70,7 +70,7 @@
   },
   "dependencies": {
     "@atproto/api": "^0.20.27",
-    "zod": "^3.24.0"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
