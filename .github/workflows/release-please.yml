@@ -1,0 +1,54 @@
+name: release-please
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write        # create tags, releases, and the release PR
+  pull-requests: write   # open/update the release PR
+  id-token: write        # OIDC trusted publishing to npm
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+      # Everything below runs ONLY when merging the release PR actually
+      # cut a new release. A GITHUB_TOKEN-created release does not trigger
+      # other workflows, so publishing lives here rather than in publish.yml.
+      - uses: actions/checkout@v7
+        if: ${{ steps.release.outputs.release_created }}
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+        if: ${{ steps.release.outputs.release_created }}
+
+      # Ensure npm 11.5.1+ for OIDC trusted publishing
+      - name: Update npm
+        run: npm install -g npm@latest
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Install dependencies
+        run: npm ci
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Build
+        run: npm run build
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Run tests
+        run: npm test
+        if: ${{ steps.release.outputs.release_created }}
+
+      # No NODE_AUTH_TOKEN needed - uses OIDC. Access set via publishConfig.
+      - name: Publish to npm
+        run: npm publish
+        if: ${{ steps.release.outputs.release_created }}

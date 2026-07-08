@@ -6,6 +6,12 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # Runtime deps -> fix(deps): so release-please cuts a patch release.
+    # Dev deps -> chore(deps-dev): (chore doesn't trigger a release).
+    commit-message:
+      prefix: fix
+      prefix-development: chore
+      include: scope
     groups:
       # Batch dev-tooling minor/patch bumps into one PR
       dev-dependencies:
