@@ -27,13 +27,14 @@ jobs:
 
       - uses: actions/setup-node@v7
         with:
-          node-version: '20'
+          node-version: '24'
           registry-url: 'https://registry.npmjs.org'
         if: ${{ steps.release.outputs.release_created }}
 
-      # Ensure npm 11.5.1+ for OIDC trusted publishing
+      # Ensure npm 11.5.1+ for OIDC trusted publishing. Pinned to ^11 so a
+      # future npm major (which may require a newer Node) can't re-break this.
       - name: Update npm
-        run: npm install -g npm@latest
+        run: npm install -g npm@^11
         if: ${{ steps.release.outputs.release_created }}
 
       - name: Install dependencies
