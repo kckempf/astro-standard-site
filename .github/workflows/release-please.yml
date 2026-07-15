@@ -3,6 +3,7 @@ name: release-please
 on:
   push:
     branches: [main]
+  workflow_dispatch:   # manual run: publish the version currently on main (recovery)
 
 permissions:
   contents: write        # create tags, releases, and the release PR
@@ -23,33 +24,32 @@ jobs:
       # cut a new release. A GITHUB_TOKEN-created release does not trigger
       # other workflows, so publishing lives here rather than in publish.yml.
       - uses: actions/checkout@v7
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
 
       - uses: actions/setup-node@v7
         with:
           node-version: '24'
           registry-url: 'https://registry.npmjs.org'
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
 
-      # Ensure npm 11.5.1+ for OIDC trusted publishing. Pinned to ^11 so a
-      # future npm major (which may require a newer Node) can't re-break this.
+      # Ensure npm 11.5.1+ for OIDC trusted publishing.
       - name: Update npm
-        run: npm install -g npm@^11
-        if: ${{ steps.release.outputs.release_created }}
+        run: npm install -g npm@^latest
+        if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
 
       - name: Install dependencies
         run: npm ci
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
 
       - name: Build
         run: npm run build
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
 
       - name: Run tests
         run: npm test
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
 
       # No NODE_AUTH_TOKEN needed - uses OIDC. Access set via publishConfig.
       - name: Publish to npm
         run: npm publish
-        if: ${{ steps.release.outputs.release_created }}
+        if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
