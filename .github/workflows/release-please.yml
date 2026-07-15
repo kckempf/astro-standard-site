@@ -34,7 +34,7 @@ jobs:
 
       # Ensure npm 11.5.1+ for OIDC trusted publishing.
       - name: Update npm
-        run: npm install -g npm@^latest
+        run: npm install -g npm@latest
         if: ${{ steps.release.outputs.release_created || github.event_name == 'workflow_dispatch' }}
 
       - name: Install dependencies
