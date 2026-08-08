@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/kckempf/astro-standard-site/compare/astro-standard-site-v1.1.1...astro-standard-site-v1.1.2) (2026-08-08)
+
+
+### Bug Fixes
+
+* **deps:** bump @atproto/api from 0.20.28 to 0.20.31 in the production-dependencies group ([f9d61bd](https://github.com/kckempf/astro-standard-site/commit/f9d61bd92a28cfa66b071a59d4204461fd1a5518))
+* **deps:** bump @atproto/api in the production-dependencies group ([8dc8809](https://github.com/kckempf/astro-standard-site/commit/8dc88095e36f25bfc2c34c2b77d887b52c5403d1))
+
 ## [1.1.1](https://github.com/kckempf/astro-standard-site/compare/astro-standard-site-v1.1.0...astro-standard-site-v1.1.1) (2026-07-15)
 
 
