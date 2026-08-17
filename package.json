@@ -1,6 +1,6 @@
 {
   "name": "@kckempf/astro-standard-site",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "description": "Astro integration for standard.site - unified ATProto longform publishing (fork of @bryanguffey/astro-standard-site)",
   "keywords": [
     "astro",
