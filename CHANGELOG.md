@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.7](https://github.com/kckempf/astro-standard-site/compare/astro-standard-site-v1.1.6...astro-standard-site-v1.1.7) (2026-09-25)
+
+
+### Bug Fixes
+
+* **deps:** bump zod from 4.6.4 to 4.6.5 in the production-dependencies group ([b578ce7](https://github.com/kckempf/astro-standard-site/commit/b578ce7bde0942cb9baf91d8cc0182423badadc5))
+
 ## [1.1.6](https://github.com/kckempf/astro-standard-site/compare/astro-standard-site-v1.1.5...astro-standard-site-v1.1.6) (2026-09-22)
 
 
