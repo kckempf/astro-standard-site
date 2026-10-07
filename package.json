@@ -69,7 +69,7 @@
     "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
-    "@atproto/api": "^0.21.0",
+    "@atproto/api": "^0.23.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
