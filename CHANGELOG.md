@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.10](https://github.com/kckempf/astro-standard-site/compare/astro-standard-site-v1.1.9...astro-standard-site-v1.1.10) (2026-10-16)
+
+
+### Bug Fixes
+
+* **deps:** bump the production-dependencies group with 2 updates ([c9a048a](https://github.com/kckempf/astro-standard-site/commit/c9a048a8e52a7607336f280b762f60a278e1584e))
+* **deps:** bump the production-dependencies group with 2 updates ([12f3456](https://github.com/kckempf/astro-standard-site/commit/12f34565d67d4b6b5cf15ff36e6ff2ca61dabf6e))
+
 ## [1.1.9](https://github.com/kckempf/astro-standard-site/compare/astro-standard-site-v1.1.8...astro-standard-site-v1.1.9) (2026-10-07)
 
 
